@@ -1,6 +1,11 @@
 package dbops
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
+
+var tempVid string
 
 func clearTables() {
 	dbConn.Exec("truncate users")
@@ -16,10 +21,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestUserWorkFlow(t *testing.T) {
-	t.Run("Add", testAddUser)
-	t.Run("Get", testGetUser)
-	t.Run("Del", testDeleteUser)
-	t.Run("Rge", testRegetUser)
+	t.Run("AddUser", testAddUser)
+	t.Run("GetUser", testGetUser)
+	t.Run("DelUser", testDeleteUser)
+	t.Run("RegetUser", testRegetUser)
 }
 
 func testAddUser(t *testing.T) {
@@ -51,5 +56,43 @@ func testRegetUser(t *testing.T) {
 
 	if pwd != "" {
 		t.Errorf("Deleting user test failed")
+	}
+}
+
+func TestVideoWorkFlow(t *testing.T) {
+	t.Run("PrepareUser", testAddUser)
+	t.Run("AddVideo", testAddVideo)
+	t.Run("GetVideo", testGetVideo)
+	t.Run("DeleteVideo", testDeleteVideo)
+	t.Run("RegetVideo", testRegetVideo)
+}
+
+func testAddVideo(t *testing.T) {
+	video, err := AddNewVideo(1, "my-video")
+	if err != nil {
+		t.Errorf("Error of AddNewVideo: %v", err)
+	}
+	fmt.Println(video.Id)
+	tempVid = video.Id
+}
+
+func testGetVideo(t *testing.T) {
+	_, err := GetVideoInfo(tempVid)
+	if err != nil {
+		t.Errorf("Error of GetVideoInfo: %v", err)
+	}
+}
+
+func testDeleteVideo(t *testing.T) {
+	err := DeleteVideo(tempVid)
+	if err != nil {
+		t.Errorf("Error of DeleteVideo: %v", err)
+	}
+}
+
+func testRegetVideo(t *testing.T) {
+	video, err := GetVideoInfo(tempVid)
+	if err != nil || video != nil {
+		t.Errorf("Error of RegetVideo: %v", err)
 	}
 }
