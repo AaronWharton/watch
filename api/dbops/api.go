@@ -125,3 +125,56 @@ func DeleteVideo(vid string) error {
 
 	return nil
 }
+
+// Comment
+func AddNewComment(vid string, aid int, content string) error {
+	id, err := utils.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	stmtIns, err := dbConn.Prepare("insert into comments (id, video_id, author_id, content) values (?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmtIns.Exec(id, vid, aid, content)
+	if err != nil {
+		return err
+	}
+
+	defer stmtIns.Close()
+	return nil
+}
+
+func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
+
+	var res []*defs.Comment
+
+	stmtOut, err := dbConn.Prepare(`select comments.id, users.login_name, comments.content from comments
+		inner join users on comments.author_id = users.id
+		where comments.video_id = ? and comments.time > FROM_UNIXTIME(?) and comments.time <= FROM_UNIXTIME(?)`)
+	if err != nil {
+		return res, err
+	}
+
+	rows, err := stmtOut.Query(vid, from, to)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, name, content string
+		err := rows.Scan(&id, &name, &content)
+		if err != nil {
+			return res, err
+		}
+
+		c := &defs.Comment{Id: id, VideoId: vid, UserName: name, Content: content}
+		res = append(res, c)
+	}
+
+	defer stmtOut.Close()
+
+	return res, nil
+}

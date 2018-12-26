@@ -1,8 +1,9 @@
 package dbops
 
 import (
-	"fmt"
+	"strconv"
 	"testing"
+	"time"
 )
 
 var tempVid string
@@ -20,6 +21,7 @@ func TestMain(m *testing.M) {
 	clearTables()
 }
 
+// User test
 func TestUserWorkFlow(t *testing.T) {
 	t.Run("AddUser", testAddUser)
 	t.Run("GetUser", testGetUser)
@@ -59,7 +61,9 @@ func testRegetUser(t *testing.T) {
 	}
 }
 
+// video test
 func TestVideoWorkFlow(t *testing.T) {
+	clearTables()
 	t.Run("PrepareUser", testAddUser)
 	t.Run("AddVideo", testAddVideo)
 	t.Run("GetVideo", testGetVideo)
@@ -72,7 +76,6 @@ func testAddVideo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error of AddNewVideo: %v", err)
 	}
-	fmt.Println(video.Id)
 	tempVid = video.Id
 }
 
@@ -94,5 +97,36 @@ func testRegetVideo(t *testing.T) {
 	video, err := GetVideoInfo(tempVid)
 	if err != nil || video != nil {
 		t.Errorf("Error of RegetVideo: %v", err)
+	}
+}
+
+// comment test
+func TestCommentWorkFlow(t *testing.T) {
+	clearTables()
+	t.Run("PrepareUser", testAddUser)
+	t.Run("AddComment", testAddComment)
+	t.Run("ListComment", testListComment)
+}
+
+func testAddComment(t *testing.T) {
+
+	vid := "12345"
+	aid := 1
+	content := "I like this video."
+
+	if err := AddNewComment(vid, aid, content); err != nil {
+		t.Errorf("Error of AddNewComment: %v", err)
+	}
+}
+
+func testListComment(t *testing.T) {
+
+	vid := "12345"
+	from := 1314521520
+	to, _ := strconv.Atoi(strconv.FormatInt(time.Now().UnixNano()/1000000000, 10))
+
+	_, err := ListComments(vid, from, to)
+	if err != nil {
+		t.Errorf("Error of ListComments: %v", err)
 	}
 }
