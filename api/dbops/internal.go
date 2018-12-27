@@ -79,10 +79,25 @@ func RetrieveAllSessions() (*sync.Map, error) {
 		}
 
 		if ttlInt, err2 := strconv.ParseInt(ttl, 10, 64); err2 == nil {
-			simpleSession := &defs.SimpleSession{UserName:loginName, TTL:ttlInt}
+			simpleSession := &defs.SimpleSession{UserName: loginName, TTL: ttlInt}
 			m.Store(id, simpleSession)
 		}
 	}
 
 	return m, nil
+}
+
+func DeleteSession(sid string) error {
+	stmtDel, err := dbConn.Prepare("DELETE * from sessions where session_id=?")
+	if err != nil {
+		return err
+	}
+
+	if _, err = stmtDel.Exec(sid); err != nil {
+		return err
+	}
+
+	defer stmtDel.Close()
+
+	return nil
 }
