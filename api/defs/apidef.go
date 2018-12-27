@@ -18,3 +18,8 @@ type Comment struct {
 	UserName string
 	Content  string
 }
+
+type SimpleSession struct {
+	UserName string
+	TTL      int64
+}
