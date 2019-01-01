@@ -25,7 +25,7 @@ func (m middlewareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.r.ServeHTTP(w, r)
-	defer m.l.ReleaseConn() 
+	defer m.l.ReleaseConn()
 }
 
 func RegisterHandlers() *httprouter.Router {
@@ -40,5 +40,6 @@ func RegisterHandlers() *httprouter.Router {
 
 func main() {
 	r := RegisterHandlers()
-	http.ListenAndServe(":9000", r)
+	mh := NewMiddlewareHandler(r, 2)
+	http.ListenAndServe(":9000", mh)
 }
