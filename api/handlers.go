@@ -16,12 +16,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	body := &defs.UserCredential{}
 
 	if err := json.Unmarshal(res, body); err != nil {
-		sendErrorResponse(w, defs.ERROR_REAUEST_BODY_PARSE_FAILED)
+		sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
 		return
 	}
 
 	if err := dbops.AddUserCredential(body.Username, body.Pwd); err != nil {
-		sendErrorResponse(w, defs.ERROR_DB_ERROR)
+		sendErrorResponse(w, defs.ErrorDbError)
 		return
 	}
 
@@ -29,7 +29,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	signedUp := &defs.SignedUp{Success: true, SessionId: sid}
 
 	if resp, err := json.Marshal(signedUp); err != nil {
-		sendErrorResponse(w, defs.ERROR_INTERNAL_FAULTS)
+		sendErrorResponse(w, defs.ErrorInternalFaults)
 		return
 	} else {
 		sendNormalResponse(w, string(resp), 201)

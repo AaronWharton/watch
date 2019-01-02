@@ -6,11 +6,11 @@ import (
 	"watch/api/session"
 )
 
-var HEADER_FIELD_SESSION = "X-Session-Id"
-var HEADER_FIELD_USERNAME = "X-User-Name"
+var HeaderFieldSession = "X-Session-Id"
+var HeaderFieldUsername = "X-User-Name"
 
 func validateUserSession(r *http.Request) bool {
-	sid := r.Header.Get(HEADER_FIELD_SESSION)
+	sid := r.Header.Get(HeaderFieldSession)
 	if len(sid) == 0 {
 		return false
 	}
@@ -20,14 +20,14 @@ func validateUserSession(r *http.Request) bool {
 		return false
 	}
 
-	r.Header.Add(HEADER_FIELD_USERNAME, username)
+	r.Header.Add(HeaderFieldUsername, username)
 	return true
 }
 
 func validateUser(w http.ResponseWriter, r *http.Request) bool {
-	username := r.Header.Get(HEADER_FIELD_USERNAME)
+	username := r.Header.Get(HeaderFieldUsername)
 	if len(username) == 0 {
-		sendErrorResponse(w, defs.ERROR_UESER_UNAUTHORIZED)
+		sendErrorResponse(w, defs.ErrorUserUnauthorized)
 		return false
 	}
 
