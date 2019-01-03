@@ -1,6 +1,7 @@
 package taskrunner
 
 const (
+	VideoPath = "./videos/"
 	ReadyToDispatch = "d"
 	ReadtToExecute = "e"
 	Close = "c"
